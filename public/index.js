@@ -3,7 +3,7 @@
 //list of bats
 //useful for ALL 5 steps
 //could be an array of objects that you fetched from api or database
-const bars = [{
+var bars = [{
   'id': 'f944a3ff-591b-4d5b-9b67-c7e08cba9791',
   'name': 'freemousse-bar',
   'pricePerHour': 50,
@@ -26,7 +26,7 @@ const bars = [{
 //The `price` is updated from step 1 and 2
 //The `commission` is updated from step 3
 //The `options` is useful from step 4
-const events = [{
+var events = [{
   'id': 'bba9500c-fd9e-453f-abf1-4cd8f52af377',
   'booker': 'esilv-bde',
   'barId': 'f944a3ff-591b-4d5b-9b67-c7e08cba9791',
@@ -75,7 +75,7 @@ const events = [{
 
 //list of actors for payment
 //useful from step 5
-const actors = [{
+var actors = [{
   'eventId': 'bba9500c-fd9e-453f-abf1-4cd8f52af377',
   'payment': [{
     'who': 'booker',
@@ -145,6 +145,82 @@ const actors = [{
     'amount': 0
   }]
 }];
+
+function booker()
+{
+ 
+  for(var i in events)
+  {
+    var temp_id= events[i].barId;
+    var temp_price=0;
+    for(var j in bars)
+    {
+      if( bars[j].id === temp_id  )
+      {
+        temp_price = (bars[j].pricePerHour)*events[i].time + (bars[j].pricePerPerson)*events[i].persons;
+        events[i].price = temp_price;
+      }
+
+    }
+
+  }
+  return;
+}
+function discount()
+{
+  for(var i in events)
+  {
+    var nbs_personnes = events[i].persons;
+    if(nbs_personnes>=10 && nbs_personnes<20 ){ events[i].price=events[i].price*0.9;}
+    if(nbs_personnes>=20 && nbs_personnes<60){ events[i].price=events[i].price*0.7;}
+    if(nbs_personnes>=60){events[i].price=events[i].price*0.5;}
+  }
+  return;
+}
+function give_money()
+{
+  for(var i in events)
+  {
+    var original_price = events[i].price;
+    events[i].commission.insurance = 0.15*original_price;
+    events[i].commission.treasury = events[i].persons;
+    events[i].commission.privateaser = original_price - events[i].commission.insurance -  events[i].commission.treasury;
+
+  }
+  return;
+}
+function applyDeductible()
+{
+  for(var i of events)
+  {
+    if(i.options.deductibleReduction === true)
+      {
+          i.commission.privateaser = i.persons;
+      }
+   
+  }
+  return;
+}
+/*
+function PayActors()
+{
+  for(var i of events)
+  {
+    for(var j of actors)
+    {
+      if(i.id===j.eventId)
+      {
+        
+      }
+    }
+  }
+  return;
+}*/
+booker();
+discount();
+give_money();
+applyDeductible();
+
 
 console.log(bars);
 console.log(events);

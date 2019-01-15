@@ -201,25 +201,48 @@ function applyDeductible()
   }
   return;
 }
-/*
+
 function PayActors()
 {
-  for(var i of events)
+  for(var event of events)
   {
-    for(var j of actors)
+    for(var actor of actors)
     {
-      if(i.id===j.eventId)
+      if(actor.eventId === event.id)
       {
-        
+        for(var i in actor.payment)
+        {
+          if(actor.payment[i].who === 'booker')
+          {
+            actor.payment[i].amount=event.price;
+          }
+          if(actor.payment[i].who === 'bar')
+          {
+            actor.payment[i].amount=event.price-(event.commission.insurance+event.commission.privateaser+event.commission.treasury);
+          }
+          if(actor.payment[i].who === 'insurance')
+          {
+            actor.payment[i].amount=event.commission.insurance;
+          }
+          if(actor.payment[i].who === 'treasury')
+          {
+            actor.payment[i].amount=event.commission.treasury;
+          }
+          if(actor.payment[i].who === 'privateaser')
+          {
+            actor.payment[i].amount=event.commission.privateaser;
+          }
+        }
       }
     }
   }
   return;
-}*/
+}
 booker();
 discount();
 give_money();
 applyDeductible();
+PayActors();
 
 
 console.log(bars);
